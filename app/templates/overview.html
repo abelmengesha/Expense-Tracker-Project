@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashstyle.css') }}">
+    <title>Calculate Your Expense</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Sidebar Section -->
+        <aside>
+            <div class="toggle">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}">
+                    <a href="{{ url_for('home') }}">
+                        <h2>Expense<span class="danger"> Tracker</span></h2>
+                    </a>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="{{ url_for('dashboard') }}">
+                    <span class="material-icons-sharp">dashboard</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="{{ url_for('expense') }}">
+                    <span class="material-symbols-outlined">attach_money</span>
+                    <h3>Expense</h3>
+                </a>
+                <a href="{{ url_for('income') }}">
+                    <span class="material-symbols-outlined">savings</span>
+                    <h3>Income</h3>
+                </a>
+                <a href="{{ url_for('overview') }}" class="active">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    <h3>Overview</h3>
+                </a>
+                <a href="{{ url_for('logout') }}">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+        <!-- End of Sidebar Section -->
+    </div>
+
+    <script src="{{ url_for('static', filename='orders.js') }}"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+</body>
+
+</html>

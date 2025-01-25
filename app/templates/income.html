@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashstyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleapp.css') }}"> 
+    <title>Calculate Your Income</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Sidebar Section -->
+        <aside>
+            <div class="toggle">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}">
+                    <a href="{{ url_for('home') }}"><h2>Expense<span class="danger"> Tracker</span></h2></a>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">
+                        close
+                    </span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="{{ url_for('dashboard') }}">
+                    <span class="material-icons-sharp">
+                        dashboard
+                    </span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="{{ url_for('expense') }}" >
+                    <span class="material-symbols-outlined">
+                        attach_money
+                        </span>
+                    <h3>Expense</h3>
+                </a>
+                <a href="{{ url_for('income') }}" class="active">
+                    <span class="material-symbols-outlined">
+                        savings
+                        </span>
+                    <h3>Income</h3>
+                </a><a href="{{ url_for('overview') }}">
+                    <span class="material-symbols-outlined">
+                        monitoring
+                        </span>
+                    <h3>OverView</h3>
+                </a>
+
+                <a href="{{ url_for('logout') }}">
+                    <span class="material-icons-sharp">
+                        logout
+                    </span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+        <!-- End of Sidebar Section -->
+          <!-- Main Content -->
+    <main>
+        <div class="app-container">
+            <form method="POST">
+                <h2>Calculate Your Income</h2>
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="help"></ion-icon></span>
+                    <input type="text" name="reason" required>
+                    <label>Reason</label>
+                </div>
+                
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="cash"></ion-icon></span>
+                    <input type="number" name="amount" required>
+                    <label>Amount</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="calendar"></ion-icon></span>
+                    <input type="date" name="date" required>
+                    <label></label>
+                </div>
+                <div class="input-box">
+                    <button type="submit">Add</button>
+                </div>
+            </form>
+         <!-- Activity -->
+         <div class="activety">
+            <h2>Activity</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reason</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for income in income %}
+                        <tr>
+                            <td>{{ income.reason }}</td>
+                        <td>
+                            ${{ "%.2f"|format(income.amount) }}
+                        </td>
+                        <td>{{ income.date.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- End of Activity -->    
+        </div>
+        </main>
+        <!-- End of Main Content -->
+        </div>
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <script src="{{ url_for('static', filename='orders.js') }}"></script>
+        <script src="{{ url_for('static', filename='index.js') }}"></script>
+    </body>
+    
+    </html>

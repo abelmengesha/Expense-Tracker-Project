@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashstyle.css') }}">
+    <title>Expense Tracker Dashboard</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Sidebar Section -->
+        <aside>
+            <div class="toggle">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}">
+                    <a href="{{ url_for('home') }}"><h2>Expense<span class="danger"> Tracker</span></h2></a>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">
+                        close
+                    </span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="{{ url_for('dashboard') }}" class="active">
+                    <span class="material-icons-sharp">
+                        dashboard
+                    </span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="{{ url_for('expense') }}">
+                    <span class="material-symbols-outlined">
+                        attach_money
+                        </span>
+                    <h3>Expense</h3>
+                </a>
+                <a href="{{ url_for('income') }}">
+                    <span class="material-symbols-outlined">
+                        savings
+                        </span>
+                    <h3>Income</h3>
+                </a>
+                <a href="{{ url_for('overview') }}">
+                    <span class="material-symbols-outlined">
+                        monitoring
+                        </span>
+                    <h3>Overview</h3>
+                </a>
+
+                <a href="{{ url_for('logout') }}">
+                    <span class="material-icons-sharp">
+                        logout
+                    </span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+        <!-- End of Sidebar Section -->
+
+        <!-- Main Content -->
+        <main>
+            <h1>Dashboard</h1>
+            <!-- Dashboard -->
+            <div class="dashboard">
+                <div class="sales">
+                    <div class="status">
+                        <div class="info">
+                            <h3>Overall</h3>
+                            <h1>${{ "%.2f"|format(overall) }}</h1>
+                        </div>
+                        <div class="progresss">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="percentage">
+                                <p>+81%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="visits">
+                    <div class="status">
+                        <div class="info">
+                            <h3>Total Income</h3>
+                            <h1>${{ "%.2f"|format(total_income) }}</h1>
+                        </div>
+                        <div class="progresss">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="percentage">
+                                <p>-48%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="searches">
+                    <div class="status">
+                        <div class="info">
+                            <h3>Total Expense</h3>
+                            <h1>${{ "%.2f"|format(total_expense * -1) }}</h1>
+                        </div>
+                        <div class="progresss">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="percentage">
+                                <p>+21%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Dashboard -->
+
+            <!-- Recent Activity -->
+            <div class="recent-active">
+                <h2>Recent Activity</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Income</th>
+                            <th>Expense</th>
+                            <th>Total</th>
+                            <th>Percentile</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+
+                        </tr>
+                    </tbody>
+                </table>
+                
+            </div>
+            <!-- End of Recent Activity -->
+
+        </main>
+        <!-- End of Main Content -->
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <div class="nav">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">
+                        menu
+                    </span>
+                </button>
+                <div class="dark-mode">
+                    <span class="material-icons-sharp active">
+                        light_mode
+                    </span>
+                    <span class="material-icons-sharp">
+                        dark_mode
+                    </span>
+                </div>
+
+                <div class="profile">
+                    <div class="info">
+                        <p>Hey, <b>{{username}}</b></p>
+                        <small class="text-muted">Admin</small>
+                    </div>
+                    <div class="profile-photo">
+                        <img src="{{ url_for('static', filename='images/profile-1.jpg') }}">
+                    </div>
+                </div>
+
+            </div>
+            <!-- End of Nav -->
+
+            <div class="user-profile">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}">
+                    <h2>Expense Tracker</h2>
+                    <p>Overview Circle Chart Section</p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    
+    <script src="{{ url_for('static', filename='orders.js') }}"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+
+</html>
