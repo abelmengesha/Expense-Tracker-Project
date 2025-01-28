@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from datetime import datetime
+from datetime import datetime, date, timedelta, timezone
 
 app = Flask(__name__)
 
@@ -24,13 +24,16 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
+    def __repr__(self):
+        return f"<User {self.username}>"
+
 class Expense(db.Model):
     __tablename__ = 'expense'
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(100), nullable=False)
     type = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('expenses', lazy=True))
 
@@ -38,11 +41,11 @@ class Expense(db.Model):
         return f"<Expense {self.category} - {self.amount}>"
 
 class Income(db.Model):
-    __tablename__ = 'income'  # Fixed the typo
+    __tablename__ = 'income' 
     id = db.Column(db.Integer, primary_key=True)
     reason = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('incomes', lazy=True))
 
@@ -120,19 +123,60 @@ def dashboard():
     incomes = Income.query.filter_by(user_id=user.id).all()
     expenses = Expense.query.filter_by(user_id=user.id).all()
 
-    # Calculate total income and total expense
+    # Calculate total income and expense
     total_income = sum(income.amount for income in incomes)
     total_expense = sum(expense.amount for expense in expenses)
     overall = total_income - total_expense
 
-    # Pass the data to the dashboard template
+    #Group expenses by catagory and calculate total 
+    category_totals = {}
+    for expense in expenses:
+        category_totals[expense.category] = category_totals.get(expense.category, 0) + expense.amount
+
+    categories = list(category_totals.keys())
+    category_values = list(category_totals.values())
+
+    # Calculate data for the current week
+    today = date.today()
+    start_of_week = today - timedelta(days=today.weekday())  # Monday of the current week
+
+    weekly_labels = []
+    weekly_income = []
+    weekly_expense = []
+    weekly_overall = []
+
+    for i in range(7):  # For each day of the week
+        current_day = start_of_week + timedelta(days=i)
+        daily_income = sum(
+            income.amount for income in incomes if income.date.date() == current_day
+        )
+        daily_expense = sum(
+            expense.amount for expense in expenses if expense.date.date() == current_day
+        )
+        daily_overall = (daily_income - daily_expense)
+        
+        weekly_labels.append(current_day.strftime('%A'))  # Add day name
+        weekly_income.append(daily_income)
+        weekly_expense.append(daily_expense)
+        weekly_overall.append(daily_overall)
+  
+    
+
+    # Pass the data to the template
     return render_template(
         'dashboard.html',
         username=username,
         total_income=total_income,
         total_expense=total_expense,
         incomes=incomes,
-        expenses=expenses, overall=overall
+        expenses=expenses,
+        overall=overall,
+        weekly_labels=weekly_labels,
+        weekly_income=weekly_income,
+        weekly_expense=weekly_expense,
+        weekly_overall=weekly_overall,
+        categories=categories,
+        category_values=category_values,
     )
 
 @app.route('/expense', methods=['GET', 'POST'])
@@ -155,13 +199,12 @@ def expense():
 
             db.session.add(new_expense)
             db.session.commit()
-            flash("Expense added successfully!", "success")
         except Exception as e:
             db.session.rollback()
             flash(f"Error: {str(e)}", "error")
 
     expenses = Expense.query.filter_by(user_id=user.id).order_by(Expense.date.desc()).all()
-    return render_template('expense.html', username=username, expenses=expenses,)
+    return render_template('expense.html', username=username, expenses=expenses)
 
 @app.route('/income', methods=['GET', 'POST'])
 def income():
@@ -182,14 +225,11 @@ def income():
 
             db.session.add(new_income)
             db.session.commit()
-            flash("Income added successfully!", "success")
         except Exception as e:
             db.session.rollback()
             flash(f"Error: {str(e)}", "error")
 
     incomes = Income.query.filter_by(user_id=user.id).order_by(Income.date.desc()).all()
-    
-
     return render_template('income.html', username=username, income=incomes)
 
 @app.route('/overview')

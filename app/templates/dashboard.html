@@ -68,7 +68,7 @@
             <h1>Dashboard</h1>
             <!-- Dashboard -->
             <div class="dashboard">
-                <div class="sales">
+                <div class="overall">
                     <div class="status">
                         <div class="info">
                             <h3>Overall</h3>
@@ -84,7 +84,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="visits">
+                <div class="income">
                     <div class="status">
                         <div class="info">
                             <h3>Total Income</h3>
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="searches">
+                <div class="expense">
                     <div class="status">
                         <div class="info">
                             <h3>Total Expense</h3>
@@ -121,24 +121,8 @@
 
             <!-- Recent Activity -->
             <div class="recent-active">
-                <h2>Recent Activity</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Income</th>
-                            <th>Expense</th>
-                            <th>Total</th>
-                            <th>Percentile</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-
-                        </tr>
-                    </tbody>
-                </table>
-                
+                <h2>Weekly Overall Progress</h2>
+                <canvas id="overallChart"></canvas>
             </div>
             <!-- End of Recent Activity -->
 
@@ -175,21 +159,26 @@
             </div>
             <!-- End of Nav -->
 
-            <div class="user-profile">
-                <div class="logo">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}">
-                    <h2>Expense Tracker</h2>
-                    <p>Overview Circle Chart Section</p>
+            <div class="weekly-profile">
+                    <canvas id="weeklyChart"></canvas>
                 </div>
-            </div>
         </div>
 
 
     </div>
-    
+    <script>
+        const weeklyChartData = {
+        labels: {{ weekly_labels | tojson | safe }},
+        income: {{ weekly_income | tojson | safe }},
+        expense: {{ weekly_expense | tojson | safe }},
+        overall: {{ weekly_overall | tojson | safe }}
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='charts.js') }}"></script>
     <script src="{{ url_for('static', filename='orders.js') }}"></script>
     <script src="{{ url_for('static', filename='index.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </body>
 
 </html>

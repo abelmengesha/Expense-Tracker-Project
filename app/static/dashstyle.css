@@ -123,7 +123,6 @@ b{
 
 aside{
     height: auto;
-    ;
 }
 
 aside .toggle{
@@ -243,6 +242,7 @@ main .dashboard > div{
     box-shadow: var(--box-shadow);
     cursor: pointer;
     transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 main .dashboard > div:hover{
@@ -266,6 +266,7 @@ main .dashboard .progresss{
     height: 92px;
     border-radius: 50%;
 }
+
 /* Percentage Overview Design by Circle */
 
 main .dashboard svg{
@@ -280,19 +281,19 @@ main .dashboard svg circle{
     transform: translate(5px, 5px);
 }
 
-main .dashboard .sales svg circle{
+main .dashboard .overall svg circle{
     stroke: var(--color-success);
     stroke-dashoffset: -30;
     stroke-dasharray: 200;
 }
 
-main .dashboard .visits svg circle{
+main .dashboard .income svg circle{
     stroke: var(--color-danger);
     stroke-dashoffset: -30;
     stroke-dasharray: 200;
 }
 
-main .dashboard .searches svg circle{
+main .dashboard .expense svg circle{
     stroke: var(--color-primary);
     stroke-dashoffset: -30;
     stroke-dasharray: 200;
@@ -309,16 +310,9 @@ main .dashboard .progresss .percentage{
     width: 100%;
 }
 
-
 main .recent-active{
-    margin-top: 1.3rem;
-}
-
-main .recent-active h2{
-    margin-bottom: 0.8rem;
-}
-
-main .recent-active table{
+    margin-top: 2.5rem;
+    height: 450px;
     background-color: var(--color-white);
     width: 100%;
     padding: var(--card-padding);
@@ -326,20 +320,15 @@ main .recent-active table{
     box-shadow: var(--box-shadow);
     border-radius: var(--card-border-radius);
     transition: all 0.3s ease;
+    
+}
+main .recent-active canvas{
+    margin-bottom: 2rem;
+    height: auto;
 }
 
-main .recent-active table:hover{
+main .recent-active:hover{
     box-shadow: none;
-}
-
-main table tbody td{
-    height: 2.8rem;
-    border-bottom: 1px solid var(--color-light);
-    color: var(--color-dark-variant);
-}
-
-main table tbody tr:last-child td{
-    border: none;
 }
 
 main .recent-active a{
@@ -402,7 +391,7 @@ main .recent-active a{
     overflow: hidden;
 }
 
-.right-section .user-profile{
+.right-section .weekly-profile{
     display: flex;
     justify-content: center;
     text-align: center;
@@ -413,22 +402,19 @@ main .recent-active a{
     box-shadow: var(--box-shadow);
     cursor: pointer;
     transition: all 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    height: 300px;
+    overflow: auto;
 }
 
-.right-section .user-profile:hover{
+.right-section .weekly-profile:hover{
     box-shadow: none;
 }
 
-.right-section .user-profile img{
-    width: 11rem;
-    height: auto;
-    margin-bottom: 0.8rem;
-    border-radius: 50%;
-}
-
-.right-section .user-profile h2{
-    margin-bottom: 0.2rem;
-}
 @media screen and (max-width: 1200px) {
     .container{
         width: 95%;
@@ -478,7 +464,6 @@ main .recent-active a{
     main table tbody tr td:first-child{
         display: none;
     }
-
 }
 
 @media screen and (max-width: 768px) {
@@ -506,7 +491,7 @@ main .recent-active a{
        } 
     }
 
-    aside .logo{
+    aside .chart-container{
         margin-left: 1rem;
     }
 
@@ -538,7 +523,6 @@ main .recent-active a{
         padding: 0 1rem;
     }
 
-
     main .recent-active{
         position: relative;
         margin: 3rem 0 0 0;
@@ -551,7 +535,7 @@ main .recent-active a{
     }
 
     .right-section{
-        width: 94%;
+        width: 100%;
         margin: 0 auto 4rem;
     }
 
@@ -591,5 +575,23 @@ main .recent-active a{
     .right-section .nav button span{
         font-size: 2rem;
     }
+}
 
+@media screen and (max-width: 480px) {
+    .container{
+        grid-template-columns: 1fr;
+    }
+
+    aside{
+        width: 100%;
+    }
+
+    main .dashboard{
+        grid-template-columns: 1fr;
+    }
+
+    .right-section .nav .dark-mode{
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
