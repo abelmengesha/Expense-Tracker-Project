@@ -90,11 +90,11 @@ def signup():
             db.session.commit()
             flash("Account created successfully!", "success")
             return redirect(url_for('login'))
-        except Exception as e:
+        except Exception as e:#Chceck if the username is on the database
             db.session.rollback()
             if 'UNIQUE constraint failed' in str(e):
                 flash("Username already exists", "error")
-            else:
+            else:#Used to Handle any other error if occured 
                 flash("An error occurred while creating the account", "error")
     return render_template('signup.html')
 #Login Page
@@ -108,44 +108,45 @@ def login():
             flash("Please fill out both fields", "error")
             return redirect(url_for('login'))
 
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(username=username).first()# Checks the database
 
-        if user and bcrypt.check_password_hash(user.password, password):
+        if user and bcrypt.check_password_hash(user.password, password):#Conditions if the user is on the database and redirect him/or to the dashboard
             session['username'] = username
             flash("Login successful!", "success")
             return redirect(url_for('dashboard'))
-        else:
+        else:#If the there is mismatch of username and password prints the flash message
             flash("Invalid credentials", "error")
     return render_template('login.html')
 #The Dashboard
 @app.route('/dashboard')
 def dashboard():
-    if 'username' not in session:
+    if 'username' not in session: #It handles if the user not logged in (it will not be able to access the page)
         flash("Please log in to access the dashboard", "error")
         return redirect(url_for('login'))
 
     username = session['username']
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(username=username).first()#Matches the username from database to access the page
 
-    # Fetch incomes and expenses for the logged-in user
+    #Used to get expense and income from the database to display in the dashboard
     incomes = Income.query.filter_by(user_id=user.id).all()
     expenses = Expense.query.filter_by(user_id=user.id).all()
 
-    # Calculate total income and expense
+    # Calculates the sums of the variables given and used to represent the data as a chart using javascript
     total_income = sum(income.amount for income in incomes)
     total_expense = sum(expense.amount for expense in expenses)
     overall = total_income - total_expense
 
-    # Calculate data for the current week
+    # Calculate data for the week by getting dates and amount for expense and income
     today = date.today()
-    start_of_week = today - timedelta(days=today.weekday())  # Monday of the current week
+    start_of_week = today - timedelta(days=today.weekday())  # Used to start the week from Monday
 
+    #Creating empty listto store
     weekly_labels = []
     weekly_income = []
     weekly_expense = []
     weekly_overall = []
 
-    for i in range(7):  # For each day of the week
+    for i in range(7):  # For loop to start from Monday to Sunday each by each
         current_day = start_of_week + timedelta(days=i)
         daily_income = sum(
             income.amount for income in incomes if income.date.date() == current_day
@@ -162,7 +163,7 @@ def dashboard():
   
     
 
-    # Pass the data to the template
+    #Used to Pass the data to the template
     return render_template(
         'dashboard.html',
         username=username,
@@ -191,8 +192,8 @@ def expense():
         try:
             category = request.form['category']
             type_ = request.form['type']
-            amount = float(request.form['amount'])  # Convert to float
-            date = datetime.strptime(request.form['date'], '%Y-%m-%d')  # Parse date
+            amount = float(request.form['amount']) 
+            date = datetime.strptime(request.form['date'], '%Y-%m-%d') 
 
             new_expense = Expense(category=category, type=type_, amount=amount, date=date, user_id=user.id)
 
@@ -272,3 +273,5 @@ def logout():
     session.pop('username', None)
     flash("Logged out successfully", "success")
     return redirect(url_for('login'))
+
+#End of the Code
