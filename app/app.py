@@ -1,22 +1,26 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+#Importing Required Python Libraries
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from datetime import datetime, date, timedelta, timezone
+from collections import defaultdict
+
 
 app = Flask(__name__)
 
-# Configuration
-app.secret_key = "Abegamer"
+# Configuration for Security
+app.secret_key = "AbelMengesha"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SECURE'] = False
 
-# Initialize extensions
+# Creating SQLAlchemy to manage the database and starting bcrypt for hashing user password for security 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-# Database Models
+# Database Models for The user and for the web app data
+#User Database Model
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +30,7 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
-
+#Web app database model
 class Expense(db.Model):
     __tablename__ = 'expense'
     id = db.Column(db.Integer, primary_key=True)
@@ -52,19 +56,22 @@ class Income(db.Model):
     def __repr__(self):
         return f"<Income {self.reason} - {self.amount}>"
 
-# Initialize database
+#Creating the database which is the model given above
 with app.app_context():
     db.create_all()
 
-# Routes
+#Connecting the templates route
 
+#Home Page
 @app.route('/')
 def home():
     return render_template('home.html')
 
+#Registration Page
+#sign Up Page
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
+    if request.method == 'POST':#Getting input Variables from the user
         full_name = request.form['full_name']
         username = request.form['username']
         password = request.form['password']
@@ -74,11 +81,12 @@ def signup():
             flash("Passwords do not match", "error")
             return redirect(url_for('signup'))
 
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')#Encrypting the user password by bcrypt
 
-        new_user = User(full_name=full_name, username=username, password=hashed_password)
+        new_user = User(full_name=full_name, username=username, password=hashed_password)#Assigning session for the user to send it to the database
+        
         try:
-            db.session.add(new_user)
+            db.session.add(new_user)#adding the user data to the database table
             db.session.commit()
             flash("Account created successfully!", "success")
             return redirect(url_for('login'))
@@ -89,7 +97,7 @@ def signup():
             else:
                 flash("An error occurred while creating the account", "error")
     return render_template('signup.html')
-
+#Login Page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -109,7 +117,7 @@ def login():
         else:
             flash("Invalid credentials", "error")
     return render_template('login.html')
-
+#The Dashboard
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
@@ -127,14 +135,6 @@ def dashboard():
     total_income = sum(income.amount for income in incomes)
     total_expense = sum(expense.amount for expense in expenses)
     overall = total_income - total_expense
-
-    #Group expenses by catagory and calculate total 
-    category_totals = {}
-    for expense in expenses:
-        category_totals[expense.category] = category_totals.get(expense.category, 0) + expense.amount
-
-    categories = list(category_totals.keys())
-    category_values = list(category_totals.values())
 
     # Calculate data for the current week
     today = date.today()
@@ -175,10 +175,9 @@ def dashboard():
         weekly_income=weekly_income,
         weekly_expense=weekly_expense,
         weekly_overall=weekly_overall,
-        categories=categories,
-        category_values=category_values,
+        
     )
-
+#Expense Calculator Page
 @app.route('/expense', methods=['GET', 'POST'])
 def expense():
     if 'username' not in session:
@@ -205,7 +204,7 @@ def expense():
 
     expenses = Expense.query.filter_by(user_id=user.id).order_by(Expense.date.desc()).all()
     return render_template('expense.html', username=username, expenses=expenses)
-
+#Income Calculator Page
 @app.route('/income', methods=['GET', 'POST'])
 def income():
     if 'username' not in session:
@@ -231,21 +230,45 @@ def income():
 
     incomes = Income.query.filter_by(user_id=user.id).order_by(Income.date.desc()).all()
     return render_template('income.html', username=username, income=incomes)
-
+#Overview Data monitoring page
 @app.route('/overview')
 def overview():
     if 'username' not in session:
         flash("Please log in to access this page", "error")
         return redirect(url_for('login'))
 
-    return render_template('overview.html')
+    username = session['username']
+    user = User.query.filter_by(username=username).first()
 
+    expenses = Expense.query.filter_by(user_id=user.id).all()
+    incomes = Income.query.filter_by(user_id=user.id).all()
+
+    expense_totals = defaultdict(float)
+    for expense in expenses:
+        expense_totals[expense.category] += expense.amount
+
+
+    income_totals = defaultdict(float)
+    for income in incomes:
+        income_totals[income.reason] += income.amount
+
+    expense_labels = list(expense_totals.keys())
+    expense_values = list(expense_totals.values())
+
+    income_labels = list(income_totals.keys())
+    income_values = list(income_totals.values())
+
+    return render_template(
+        'overview.html',
+        username=username,
+        expense_labels=expense_labels,
+        expense_values=expense_values,
+        income_labels=income_labels,
+        income_values=income_values
+    )
+#Logout Button to exit the user session 
 @app.route('/logout')
 def logout():
     session.pop('username', None)
     flash("Logged out successfully", "success")
     return redirect(url_for('login'))
-
-# Run the app
-if __name__ == '__main__':
-    app.run(debug=True)

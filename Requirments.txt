@@ -1,0 +1,2 @@
+Note that Libraries have to be install in order to run the app
+- Libraries used Flask, SQLITE database system, bcrypt(password encrypting system)

@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='dashstyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleapp.css') }}"> 
     <title>Calculate Your Expense</title>
 </head>
 
@@ -51,8 +52,32 @@
             </div>
         </aside>
         <!-- End of Sidebar Section -->
-    </div>
+         <!-- OverView Page-->
+         <div class="recent-active">
+            
+            <h1>Expense Data</h1>
+            <canvas id="expensePieChart"></canvas>
+            <h1>Income Data</h1>
+            <canvas id ='incomePieChart'></canvas>
+        </div>
+      
 
+
+    </div>
+    <script>
+        var expenseLabels = {{ expense_labels | tojson }};
+        var expenseValues = {{ expense_values | tojson }};
+        var incomeLabels = {{ income_labels | tojson }};
+        var incomeValues = {{ income_values | tojson }};
+    
+        console.log("Expense Labels:", expenseLabels);
+        console.log("Expense Values:", expenseValues);
+        console.log("Income Labels:", incomeLabels);
+        console.log("Income Values:", incomeValues);
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='charts.js') }}"></script>
     <script src="{{ url_for('static', filename='orders.js') }}"></script>
     <script src="{{ url_for('static', filename='index.js') }}"></script>
 </body>

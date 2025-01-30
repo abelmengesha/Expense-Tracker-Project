@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: overall,
                         backgroundColor: '#1B9C85',
                         borderColor:  '#1B9C85',
-                        borderWidth: 0.5
+                        borderWidth: 2
                     },
                 ]
             },
@@ -112,3 +112,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    if (!Array.isArray(expenseLabels) || !Array.isArray(expenseValues) || expenseLabels.length === 0) {
+        console.error("Expense data is missing or not formatted correctly.");
+        return;
+    }
+
+    if (!Array.isArray(incomeLabels) || !Array.isArray(incomeValues) || incomeLabels.length === 0) {
+        console.error("Income data is missing or not formatted correctly.");
+        return;
+    }
+
+    // Expense Pie Chart
+    var expenseCtx = document.getElementById("expensePieChart").getContext("2d");
+    new Chart(expenseCtx, {
+        type: "pie",
+        data: {
+            labels: expenseLabels,
+            datasets: [{
+                data: expenseValues,
+                backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50", "#9C27B0"],
+                hoverOffset: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { 
+                    position: "bottom",
+                    labels:{
+                        font: {
+                            size: 20,
+                            weight: 'bold'
+                        },
+                        padding: 20,
+                    } }
+            }
+        }
+    });
+
+    // Income Pie Chart
+    var incomeCtx = document.getElementById("incomePieChart").getContext("2d");
+    new Chart(incomeCtx, {
+        type: "pie",
+        data: {
+            labels: incomeLabels,
+            datasets: [{
+                data: incomeValues,
+                backgroundColor: ["#3F51B5", "#009688", "#FF5722", "#795548", "#FFC107"],
+                hoverOffset: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { 
+                    position: "bottom",
+                    labels: {
+                        font: {
+                             size: 20,
+                             weight: 'bold',
+                        },
+                        padding: 20,
+                    }
+                }
+                
+            }
+        }
+    });
+});
