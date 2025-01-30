@@ -166,14 +166,21 @@
 
 
     </div>
+    {% if weekly_labels and weekly_income and weekly_expense and weekly_overall %}
     <script>
-        const weeklyChartData = {
-        labels: {{ weekly_labels | tojson | safe }},
-        income: {{ weekly_income | tojson | safe }},
-        expense: {{ weekly_expense | tojson | safe }},
-        overall: {{ weekly_overall | tojson | safe }}
-    };
+        var weeklyChartData = {
+            labels: {{ weekly_labels | tojson | safe }},
+            income: {{ weekly_income | tojson | safe }},
+            expense: {{ weekly_expense | tojson | safe }},
+            overall: {{ weekly_overall | tojson | safe }}
+        };
     </script>
+    {% else %}
+    <script>
+        console.error("Weekly chart data is not available.");
+    </script>
+    {% endif %}
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='charts.js') }}"></script>
     <script src="{{ url_for('static', filename='orders.js') }}"></script>
