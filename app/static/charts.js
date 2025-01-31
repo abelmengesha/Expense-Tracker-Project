@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // Allow the chart to adjust size responsively
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         title: {
                             display: true,
                             text: 'Days of the Week'
+                            
                         }
                     }
                 }
@@ -111,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Weekly chart data is not defined.");
     }
 });
-
+// Pie Chart in Overview page
 document.addEventListener("DOMContentLoaded", function () {
     if (!Array.isArray(expenseLabels) || !Array.isArray(expenseValues) || expenseLabels.length === 0) {
         console.error("Expense data is missing or not formatted correctly.");
@@ -181,3 +182,39 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+// Dashboard Page Pie Chart
+document.addEventListener("DOMContentLoaded", function () {
+    // Get the pie chart canvas
+    const ctxPie = document.getElementById("weeklyPie").getContext("2d");
+
+    // Define Pie Chart Data
+    const pieChartData = {
+        labels: ["Income", "Expense"],
+        datasets: [{
+            data: [weeklyChartData.income.reduce((a, b) => a + b, 0), 
+                   weeklyChartData.expense.reduce((a, b) => a + b, 0) * -1], // Convert expense to positive value
+            backgroundColor: ["#4CAF50", "#FF5252"], // Green for income, Red for expense
+            hoverOffset: 4
+        }]
+    };
+
+    // Create Pie Chart
+    new Chart(ctxPie, {
+        type: "pie",
+        data: pieChartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "top",
+                },
+                title: {
+                    display: true,
+                    text: "Income vs Expense"
+                }
+            }
+        }
+    });
+});
+
+   
