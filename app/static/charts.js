@@ -184,10 +184,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 // Dashboard Page Pie Chart
 document.addEventListener("DOMContentLoaded", function () {
-    // Get the pie chart canvas
+    // Geting the pie chart canvas from the dashboard.html
     const ctxPie = document.getElementById("weeklyPie").getContext("2d");
 
-    // Define Pie Chart Data
+    // Defining Pie Chart Data
     const pieChartData = {
         labels: ["Income", "Expense"],
         datasets: [{
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }]
     };
 
-    // Create Pie Chart
+    // Creating Pie Chart
     new Chart(ctxPie, {
         type: "pie",
         data: pieChartData,
