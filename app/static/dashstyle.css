@@ -427,7 +427,7 @@ main .recent-active a{
     margin-right: auto;
     position: relative;
     height: 300px;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .right-section .weekly-profile:hover{
