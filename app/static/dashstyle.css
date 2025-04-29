@@ -312,7 +312,7 @@ main .dashboard .progresss .percentage{
 
 main .recent-active{
     margin-top: 2.5rem;
-    height: 450px;
+    height: 650px;
     background-color: var(--color-white);
     width: 100%;
     padding: var(--card-padding);
